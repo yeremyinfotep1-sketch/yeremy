@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocinando con [insertar nombre]</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Estilo de fuente Inter para un diseño minimalista -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc;
+        }
+        .recipe-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .hidden-section {
+            display: none;
+        }
+        /* Estilos para el menú desplegable en la barra lateral */
+        .sidebar-dropdown-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        .sidebar-dropdown-content.open {
+            max-height: 500px; /* Suficiente para la lista, ajusta si es necesario */
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Encabezado y Barra de Navegación Superior -->
+    <header class="bg-white shadow-md py-4 sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-bold text-gray-800" onclick="showSection('inicio')">Cocinando con <span class="text-orange-500">[tu nombre]</span></a>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-6">
+                    <li><a href="#" class="text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300" onclick="showSection('inicio')">Inicio</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300" onclick="showSection('recetas')">Recetas</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300" onclick="showSection('culturas')">Culturas</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300" onclick="showSection('foros')">Foros</a></li>
+                </ul>
+            </nav>
+            <!-- Menú hamburguesa para móviles -->
+            <button id="menu-toggle" class="md:hidden text-gray-800 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        <!-- Menú desplegable para móviles -->
+        <nav id="mobile-menu" class="hidden md:hidden bg-white mt-2 border-t border-gray-200">
+            <ul class="flex flex-col space-y-2 p-4">
+                <li><a href="#" class="block text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300" onclick="showSection('inicio')">Inicio</a></li>
+                <li><a href="#" class="block text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300" onclick="showSection('recetas')">Recetas</a></li>
+                <li><a href="#" class="block text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300" onclick="showSection('culturas')">Culturas</a></li>
+                <li><a href="#" class="block text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300" onclick="showSection('foros')">Foros</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenedor Principal con Barra Lateral y Contenido -->
+    <div class="flex flex-1 flex-col md:flex-row bg-gray-100">
+
+        <!-- Barra Lateral Izquierda (Menú de Países) -->
+        <aside class="w-full md:w-64 bg-white shadow-md p-6 md:p-8 flex-shrink-0">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Países</h3>
+            <ul class="space-y-4">
+                <li class="relative">
+                    <button class="w-full text-left font-semibold text-gray-700 py-2 px-4 rounded-lg hover:bg-orange-100 transition-colors duration-300" onclick="toggleDropdown('rd-dropdown')">
+                        República Dominicana
+                        <i class="fas fa-chevron-down text-sm float-right mt-1 transform transition-transform duration-300"></i>
+                    </button>
+                    <ul id="rd-dropdown" class="sidebar-dropdown-content pl-6 mt-2 space-y-1">
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('Sancocho', 'rd-recipes')">Sancocho</a></li>
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('Mangú', 'rd-recipes')">Mangú</a></li>
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('La bandera dominicana', 'rd-recipes')">La bandera dominicana</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <button class="w-full text-left font-semibold text-gray-700 py-2 px-4 rounded-lg hover:bg-orange-100 transition-colors duration-300" onclick="toggleDropdown('italia-dropdown')">
+                        Italia
+                        <i class="fas fa-chevron-down text-sm float-right mt-1 transform transition-transform duration-300"></i>
+                    </button>
+                    <ul id="italia-dropdown" class="sidebar-dropdown-content pl-6 mt-2 space-y-1">
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('Lasagna', 'italia-recipes')">Lasagna</a></li>
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('Risotto', 'italia-recipes')">Risotto</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <button class="w-full text-left font-semibold text-gray-700 py-2 px-4 rounded-lg hover:bg-orange-100 transition-colors duration-300" onclick="toggleDropdown('venezuela-dropdown')">
+                        Venezuela
+                        <i class="fas fa-chevron-down text-sm float-right mt-1 transform transition-transform duration-300"></i>
+                    </button>
+                    <ul id="venezuela-dropdown" class="sidebar-dropdown-content pl-6 mt-2 space-y-1">
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('Pabellón criollo', 'venezuela-recipes')">Pabellón criollo</a></li>
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('Arepa', 'venezuela-recipes')">Arepa</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <button class="w-full text-left font-semibold text-gray-700 py-2 px-4 rounded-lg hover:bg-orange-100 transition-colors duration-300" onclick="toggleDropdown('india-dropdown')">
+                        India
+                        <i class="fas fa-chevron-down text-sm float-right mt-1 transform transition-transform duration-300"></i>
+                    </button>
+                    <ul id="india-dropdown" class="sidebar-dropdown-content pl-6 mt-2 space-y-1">
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('Pollo tikka masala', 'india-recipes')">Pollo tikka masala</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <button class="w-full text-left font-semibold text-gray-700 py-2 px-4 rounded-lg hover:bg-orange-100 transition-colors duration-300" onclick="toggleDropdown('china-dropdown')">
+                        China
+                        <i class="fas fa-chevron-down text-sm float-right mt-1 transform transition-transform duration-300"></i>
+                    </button>
+                    <ul id="china-dropdown" class="sidebar-dropdown-content pl-6 mt-2 space-y-1">
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('Pato laqueado', 'china-recipes')">Pato laqueado</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <button class="w-full text-left font-semibold text-gray-700 py-2 px-4 rounded-lg hover:bg-orange-100 transition-colors duration-300" onclick="toggleDropdown('australia-dropdown')">
+                        Australia
+                        <i class="fas fa-chevron-down text-sm float-right mt-1 transform transition-transform duration-300"></i>
+                    </button>
+                    <ul id="australia-dropdown" class="sidebar-dropdown-content pl-6 mt-2 space-y-1">
+                        <li><a href="#" class="block text-gray-600 hover:text-orange-500 transition-colors duration-300" onclick="showRecipePage('Empanada de carne', 'australia-recipes')">Empanada de carne</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="flex-1 p-6 md:p-10">
+
+            <!-- Sección de Inicio (visible por defecto) -->
+            <section id="inicio" class="content-section">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">Platos Más Consumidos del Año</h1>
+                <p class="text-gray-600 text-lg mb-10 max-w-2xl">Descubre las recetas que están conquistando el mundo en este momento. Desde sabores tradicionales hasta innovaciones sorprendentes.</p>
+                <div id="recipe-catalog" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Las tarjetas de recetas se generarán aquí con JavaScript -->
+                </div>
+            </section>
+
+            <!-- Sección de Recetas (oculta por defecto) -->
+            <section id="recetas" class="content-section hidden-section">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">Todas las Recetas</h1>
+                <p class="text-gray-600 text-lg mb-6">Explora nuestra colección completa de recetas. Usa la barra de búsqueda y los filtros para encontrar exactamente lo que necesitas.</p>
+                <!-- Opciones de búsqueda y filtro -->
+                <div class="flex flex-col md:flex-row gap-4 mb-8">
+                    <input type="text" placeholder="Buscar por ingrediente..." class="flex-1 p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <select class="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        <option value="">Tiempo de preparación</option>
+                        <option value="15-min">Menos de 15 min</option>
+                        <option value="30-min">Menos de 30 min</option>
+                        <option value="60-min">Menos de 1 hora</option>
+                    </select>
+                    <select class="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        <option value="">Nivel de dificultad</option>
+                        <option value="facil">Fácil</option>
+                        <option value="medio">Medio</option>
+                        <option value="dificil">Difícil</option>
+                    </select>
+                </div>
+                <div class="text-gray-600">
+                    <!-- Aquí se mostraría la lista de recetas completa, sin filtros por país. -->
+                    <p>Funcionalidad de búsqueda y filtrado de recetas se implementaría en este espacio.</p>
+                    <p>Por ahora, puedes usar el menú lateral para ver recetas específicas por país.</p>
+                </div>
+            </section>
+
+            <!-- Sección de Culturas (oculta por defecto) -->
+            <section id="culturas" class="content-section hidden-section">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">Culturas Culinarias</h1>
+                <p class="text-gray-600 text-lg mb-6">Sumérgete en la historia y las tradiciones de la gastronomía mundial. Descubre cómo la comida ha unido a las personas a lo largo del tiempo.</p>
+                <div class="space-y-8">
+                    <!-- Artículo de ejemplo -->
+                    <article class="bg-white p-6 rounded-xl shadow-sm">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">El papel del arroz en la cocina asiática</h3>
+                        <img src="https://placehold.co/800x400/f3f4f6/6b7280?text=Cultura+Asiática" alt="Arroz y comida asiática" class="w-full h-auto rounded-lg mb-4">
+                        <p class="text-gray-600">El arroz no es solo un alimento básico en Asia; es un pilar cultural, económico y social. Desde los campos de arroz en terrazas de Vietnam hasta el sushi de Japón, su presencia es fundamental en la identidad de la región...</p>
+                        <a href="#" class="text-orange-500 hover:underline mt-4 inline-block">Leer más</a>
+                    </article>
+                    <!-- Artículo de ejemplo 2 -->
+                    <article class="bg-white p-6 rounded-xl shadow-sm">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Las especias de la India: más que sabor</h3>
+                        <img src="https://placehold.co/800x400/f3f4f6/6b7280?text=Especias+de+la+India" alt="Especias de la India" class="w-full h-auto rounded-lg mb-4">
+                        <p class="text-gray-600">Las especias indias son conocidas por sus sabores intensos y aromas complejos. Sin embargo, su uso va más allá de la cocina, estando intrínsecamente ligadas a la medicina tradicional y ceremonias religiosas...</p>
+                        <a href="#" class="text-orange-500 hover:underline mt-4 inline-block">Leer más</a>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Sección de Foros (oculta por defecto) -->
+            <section id="foros" class="content-section hidden-section">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">Foros de Discusión</h1>
+                <p class="text-gray-600 text-lg mb-6">Únete a nuestra comunidad de amantes de la cocina. Comparte tus trucos, pide ayuda y aprende de las experiencias de otros usuarios.</p>
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Secciones de Temas</h2>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-lg text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300">Consejos de cocina</a></li>
+                        <li><a href="#" class="text-lg text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300">Recetas rápidas</a></li>
+                        <li><a href="#" class="text-lg text-gray-600 hover:text-orange-500 font-semibold transition-colors duration-300">Errores comunes</a></li>
+                    </ul>
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-gray-600"><strong>Nota:</strong> La funcionalidad de registro y login de usuarios, así como la moderación, requeriría una conexión a un backend y una base de datos para su implementación completa.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Receta Individual (oculta por defecto) -->
+            <section id="recipe-page" class="content-section hidden-section">
+                <!-- El contenido de la receta individual se generará aquí con JavaScript -->
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Pie de Página -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="text-sm text-center md:text-left">
+                &copy; 2024 Cocinando con [insertar nombre]. Todos los derechos reservados.
+            </div>
+            <div class="flex space-x-4 mt-4 md:mt-0">
+                <a href="https://instagram.com" target="_blank" class="text-white hover:text-orange-500 transition-colors duration-300"><i class="fab fa-instagram text-2xl"></i></a>
+                <a href="https://youtube.com" target="_blank" class="text-white hover:text-orange-500 transition-colors duration-300"><i class="fab fa-youtube text-2xl"></i></a>
+                <a href="https://facebook.com" target="_blank" class="text-white hover:text-orange-500 transition-colors duration-300"><i class="fab fa-facebook text-2xl"></i></a>
+                <a href="https://tiktok.com" target="_blank" class="text-white hover:text-orange-500 transition-colors duration-300"><i class="fab fa-tiktok text-2xl"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Array de datos de recetas para simular una base de datos
+        const recipes = [
+            {
+                id: 'pato-laqueado',
+                country: 'China',
+                name: 'Pato laqueado',
+                description: 'Un manjar crujiente y jugoso, con una piel dorada y un sabor agridulce. Servido tradicionalmente con panqueques finos y salsa hoisin.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=Pato+Laqueado'
+            },
+            {
+                id: 'lasagna',
+                country: 'Italia',
+                name: 'Lasagna Clásica',
+                description: 'Capas de pasta, carne ragú, salsa bechamel y queso parmesano horneadas a la perfección.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=Lasagna'
+            },
+            {
+                id: 'sancocho',
+                country: 'República Dominicana',
+                name: 'Sancocho Dominicano',
+                description: 'Un guiso sustancioso y lleno de sabor, con una variedad de carnes y verduras de raíz, perfecto para los días fríos.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=Sancocho'
+            },
+            {
+                id: 'pabellon-criollo',
+                country: 'Venezuela',
+                name: 'Pabellón Criollo',
+                description: 'El plato nacional de Venezuela. Arroz, carne mechada, frijoles negros y tajadas de plátano frito.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=Pabellón+Criollo'
+            },
+            {
+                id: 'pollo-tikka',
+                country: 'India',
+                name: 'Pollo Tikka Masala',
+                description: 'Trozos de pollo marinados en yogur y especias, asados y servidos en una salsa cremosa de tomate. Un clásico mundial.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=Pollo+Tikka'
+            },
+            {
+                id: 'arepa',
+                country: 'Venezuela',
+                name: 'Arepa Venezolana',
+                description: 'Pan de maíz versátil, crujiente por fuera y suave por dentro, ideal para rellenar con innumerables ingredientes.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=Arepa'
+            },
+            {
+                id: 'mangu',
+                country: 'República Dominicana',
+                name: 'Mangú',
+                description: 'Un puré suave de plátanos verdes hervidos, a menudo servido en el desayuno con cebollas salteadas, queso frito y salami.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=Mangu'
+            },
+            {
+                id: 'la-bandera-dominicana',
+                country: 'República Dominicana',
+                name: 'La bandera dominicana',
+                description: 'El plato nacional dominicano. Consiste en arroz, habichuelas guisadas y carne (generalmente de res o pollo), que forma la base de la comida.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=La+bandera+dominicana'
+            },
+            {
+                id: 'risotto',
+                country: 'Italia',
+                name: 'Risotto',
+                description: 'Un plato de arroz cremoso y rico, cocinado con caldo y una variedad de ingredientes como champiñones, azafrán o mariscos.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=Risotto'
+            },
+            {
+                id: 'empanada-de-carne',
+                country: 'Australia',
+                name: 'Empanada de carne',
+                description: 'Un pastel de carne tradicional australiano, relleno de carne picada y salsa. Es un plato popular en Australia y Nueva Zelanda.',
+                imageUrl: 'https://placehold.co/400x300/f3f4f6/6b7280?text=Empanada+de+carne'
+            }
+        ];
+
+        // Mapeo para contenido de recetas individuales
+        const recipeContent = {
+            'Sancocho': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=Sancocho+Dominicano',
+                ingredients: ['1 lb de carne de res', '1 lb de pollo', '2 plátanos verdes', 'Yuca', 'Auyama', 'Maíz', 'Cilantro', 'Ajo', 'Cebolla'],
+                steps: [
+                    'Corta las carnes en trozos pequeños y sazona con sal y pimienta.',
+                    'En una olla grande, sofríe las carnes con ajo y cebolla.',
+                    'Agrega el agua y las verduras. Cocina a fuego lento hasta que todo esté tierno.'
+                ]
+            },
+            'Mangú': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=Mangú+Dominicano',
+                ingredients: ['6 plátanos verdes', '1/2 cebolla roja', 'Aceite', 'Sal', 'Agua'],
+                steps: [
+                    'Pela y hierve los plátanos en agua con sal hasta que estén blandos.',
+                    'Maja los plátanos con un poco del agua de cocción y aceite hasta obtener un puré suave.',
+                    'Saltea la cebolla en aceite hasta que esté caramelizada y sírvela sobre el mangú.'
+                ]
+            },
+            'Pato laqueado': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=Pato+laqueado',
+                ingredients: ['Pato entero', 'Miel', 'Salsa de soja', 'Vinagre de arroz', 'Jengibre', 'Especias chinas (cinco especias)'],
+                steps: [
+                    'Marinar el pato con las especias.',
+                    'Asar el pato lentamente mientras se le aplica la mezcla de miel y salsa para obtener la piel crujiente y dorada.',
+                    'Servir con panqueques finos y salsa hoisin.'
+                ]
+            },
+            'La bandera dominicana': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=La+bandera+dominicana',
+                ingredients: ['Arroz', 'Habichuelas guisadas', 'Carne de res o pollo', 'Ensalada (opcional)', 'Plátano frito (opcional)'],
+                steps: [
+                    'Cocer el arroz blanco de forma tradicional.',
+                    'Guisar las habichuelas con sofrito y sazones.',
+                    'Preparar la carne guisada (de res o pollo).',
+                    'Servir el arroz, las habichuelas y la carne juntos. Acompañar con ensalada o plátano frito.'
+                ]
+            },
+            'Lasagna': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=Lasagna',
+                ingredients: ['Pasta para lasagna', 'Carne molida', 'Salsa de tomate', 'Queso mozzarella', 'Ricotta', 'Parmesano', 'Cebolla', 'Ajo'],
+                steps: [
+                    'Preparar la salsa ragú cocinando la carne con cebolla, ajo y salsa de tomate.',
+                    'Hacer la salsa bechamel.',
+                    'Montar la lasagna en capas: salsa, pasta, ricotta, carne y queso. Repetir hasta llenar el molde.',
+                    'Hornear hasta que esté dorada y burbujeante.'
+                ]
+            },
+            'Risotto': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=Risotto',
+                ingredients: ['Arroz Arborio', 'Caldo de pollo o verduras', 'Vino blanco', 'Cebolla', 'Mantequilla', 'Parmesano', 'Setas'],
+                steps: [
+                    'Sofríe la cebolla en mantequilla.',
+                    'Agrega el arroz y tuesta por un par de minutos. Desglasa con vino blanco.',
+                    'Incorpora el caldo caliente poco a poco, revolviendo constantemente hasta que el arroz esté cremoso.',
+                    'Añade las setas cocinadas y el parmesano al final.'
+                ]
+            },
+            'Pabellón criollo': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=Pabellón+criollo',
+                ingredients: ['Carne mechada', 'Arroz blanco', 'Frijoles negros', 'Plátano frito'],
+                steps: [
+                    'Preparar la carne mechada deshilachando la carne cocida y guisándola con sofrito.',
+                    'Hacer arroz blanco y cocer los frijoles negros.',
+                    'Freír el plátano maduro en rodajas (tajadas).',
+                    'Servir todos los componentes en el plato, cada uno en su propio espacio.'
+                ]
+            },
+            'Arepa': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=Arepa+Venezolana',
+                ingredients: ['Harina de maíz precocida', 'Agua', 'Sal'],
+                steps: [
+                    'Mezclar la harina de maíz con agua tibia y sal hasta obtener una masa homogénea.',
+                    'Formar bolas de masa y aplastarlas para darles forma de disco.',
+                    'Cocinar en un budare o sartén hasta que estén doradas y crujientes por fuera.'
+                ]
+            },
+            'Pollo tikka masala': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=Pollo+Tikka+Masala',
+                ingredients: ['Pechuga de pollo', 'Yogur natural', 'Jengibre', 'Ajo', 'Tomate', 'Crema de leche', 'Garam Masala', 'Cúrcuma', 'Comino'],
+                steps: [
+                    'Marinar el pollo en la mezcla de yogur y especias por al menos 30 minutos.',
+                    'Asar el pollo marinado en el horno o en una sartén.',
+                    'Preparar la salsa cocinando el puré de tomate con jengibre, ajo y especias. Añadir el pollo y la crema de leche. Servir con arroz o pan naan.'
+                ]
+            },
+            'Empanada de carne': {
+                image: 'https://placehold.co/800x600/f3f4f6/6b7280?text=Empanada+de+carne',
+                ingredients: ['Carne picada', 'Cebolla', 'Harina', 'Mantequilla', 'Caldo de carne', 'Salsa de soja', 'Pimienta'],
+                steps: [
+                    'Preparar el relleno cocinando la carne con la cebolla y condimentando.',
+                    'Hacer la masa de la tarta con harina y mantequilla.',
+                    'Colocar el relleno en un molde cubierto con la masa y tapar con otra capa de masa.',
+                    'Hornear hasta que la masa esté dorada y crujiente.'
+                ]
+            }
+        };
+
+        // Función para mostrar las diferentes secciones de la página
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden-section');
+            });
+            document.getElementById(sectionId).classList.remove('hidden-section');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Función para generar las tarjetas de recetas dinámicamente
+        function generateRecipeCards() {
+            const container = document.getElementById('recipe-catalog');
+            container.innerHTML = ''; // Limpiar el contenedor antes de generar
+            recipes.forEach(recipe => {
+                const card = `
+                    <div class="recipe-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer" onclick="showRecipePage('${recipe.name}')">
+                        <img src="${recipe.imageUrl}" alt="Imagen de ${recipe.name}" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">${recipe.name}</h3>
+                            <p class="text-gray-600 text-sm h-12 overflow-hidden">${recipe.description}</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        // Función para mostrar la página de una receta individual
+        function showRecipePage(recipeName) {
+            const recipe = recipeContent[recipeName];
+            if (!recipe) {
+                console.error('Receta no encontrada:', recipeName);
+                return;
+            }
+
+            const recipePage = document.getElementById('recipe-page');
+            recipePage.innerHTML = `
+                <!-- Breadcrumbs -->
+                <nav class="text-gray-500 mb-4">
+                    <a href="#" onclick="showSection('inicio')" class="hover:underline">Inicio</a> > 
+                    <a href="#" onclick="showSection('recetas')" class="hover:underline">Recetas</a> > 
+                    <span>${recipeName}</span>
+                </nav>
+                <div class="bg-white p-6 md:p-10 rounded-xl shadow-md">
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-6">${recipeName}</h1>
+                    <img src="${recipe.image}" alt="Imagen de ${recipeName}" class="w-full h-auto rounded-lg mb-8">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">Ingredientes</h2>
+                            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">Pasos de Preparación</h2>
+                            <ol class="list-decimal list-inside text-gray-700 space-y-2">
+                                ${recipe.steps.map(step => `<li>${step}</li>`).join('')}
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showSection('recipe-page');
+        }
+
+        // Función para alternar el menú desplegable en la barra lateral
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            dropdown.classList.toggle('open');
+            // Gira el icono de la flecha
+            const icon = dropdown.previousElementSibling.querySelector('i');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // Manejar el menú móvil
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Event listener para cerrar el menú móvil al hacer clic en un enlace
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Inicializar la página de inicio al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            generateRecipeCards();
+        });
+    </script>
+</body>
+</html>
