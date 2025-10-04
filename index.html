@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookFlow | Libros que Transforman tu Vida</title>
+    <!-- Carga del CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuración para usar la fuente Inter y un color base moderno -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        :root {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth; /* Habilitar el scroll suave nativo */
+        }
+        /* Estilo personalizado para un degradado oscuro y sutil de fondo en Hero */
+        .hero-bg {
+            /* Degradado de tonos oscuros (gris pizarra a negro azulado) */
+            background-image: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+        }
+        /* Asegura que el contenedor de libros se vea bien */
+        #catalogo .book-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            opacity: 0; /* Ocultar inicialmente para la animación JS */
+            transform: translateY(20px);
+        }
+        /* Estado visible para la animación */
+        #catalogo .book-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+    <!-- Configuración de Tailwind para colores y esquinas redondeadas (Dark Theme) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Colores adaptados al tema oscuro:
+                        'primary': '#93C5FD', // Azul claro/celeste (para Headers/Texto principal sobre fondo oscuro)
+                        'accent': '#FF7F00',  // NARANJA VIBRANTE (Máxima Conversión)
+                        'bg-light': '#1F2937', // Fondo para secciones/tarjetas (Gris pizarra oscuro)
+                        'bg-dark': '#111827', // Fondo principal del cuerpo y Footer (Gris muy oscuro/negro)
+                    },
+                    borderRadius: {
+                        'xl': '1.5rem',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<!-- El fondo del body ahora es el color más oscuro de la paleta, y el texto por defecto es claro -->
+<body class="bg-bg-dark text-gray-100">
+
+    <!-- 1. Header / Menú de navegación (Sticky) -->
+    <header id="navbar" class="sticky top-0 z-50 bg-bg-dark shadow-xl border-b border-gray-700 transition duration-300 ease-in-out">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+            <!-- Logo/Nombre del sitio -->
+            <!-- El logo utiliza el color Primary (azul claro) para destacar -->
+            <a href="#inicio" class="text-3xl font-extrabold text-primary hover:text-accent transition duration-150">
+                BookFlow<span class="text-accent">.</span>
+            </a>
+
+            <!-- Menú de navegación -->
+            <nav class="space-x-4">
+                <a href="#inicio" class="text-lg font-medium text-gray-300 hover:text-accent transition duration-150 p-2 rounded-lg">Inicio</a>
+                <a href="#catalogo" class="text-lg font-medium text-gray-300 hover:text-accent transition duration-150 p-2 rounded-lg">Catálogo</a>
+                <a href="#testimonios" class="text-lg font-medium text-gray-300 hover:text-accent transition duration-150 p-2 rounded-lg">Testimonios</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 2. Sección Principal (Hero Section) -->
+    <section id="inicio" class="hero-bg min-h-[90vh] flex items-center justify-center p-4">
+        <div class="max-w-4xl mx-auto text-center py-20">
+            <!-- Título Principal Impactante -->
+            <h1 class="text-5xl sm:text-7xl font-extrabold text-white leading-tight mb-4 animate-fadeInDown">
+                Desbloquea tu Potencial con la Lectura
+            </h1>
+            <!-- Subtítulo que comunica valor -->
+            <!-- El color gris 400 es ideal para texto secundario en un fondo oscuro -->
+            <p class="text-xl sm:text-2xl text-gray-400 mb-10 font-light animate-fadeInUp">
+                Descubre los libros que transformarán tu vida, carrera y perspectiva.
+            </p>
+            <!-- BOTÓN CTA MEJORADO: Naranja vibrante, más grande y con efecto hover más dramático -->
+            <a href="#catalogo" id="cta-button"
+                class="inline-block px-14 py-5 text-2xl font-black text-white bg-accent rounded-full shadow-2xl hover:bg-orange-600 transition duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-8 focus:ring-accent/70 focus:ring-opacity-50">
+                ¡COMPRA AHORA Y TRANSFÓRMATE!
+            </a>
+        </div>
+    </section>
+
+    <!-- 3. Galería de Libros -->
+    <!-- La sección usa el color bg-light (gris pizarra oscuro) para contrastar ligeramente con el body -->
+    <section id="catalogo" class="py-16 md:py-24 bg-bg-light">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Título de la sección en color Primary para destacar -->
+            <h2 class="text-4xl md:text-5xl font-bold text-center text-primary mb-12">Nuestros Títulos Más Vendidos</h2>
+
+            <!-- Contenedor de la Galería (Inyectado por JavaScript) -->
+            <div id="books-grid"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
+                <!-- Las tarjetas de libros se insertarán aquí mediante JS -->
+                <!-- Ejemplo de tarjeta de libro (se utiliza para estructura JS) -->
+                <template id="book-template">
+                    <!-- La tarjeta usa un gris aún más oscuro para separarse del fondo de la sección -->
+                    <div class="book-card p-6 bg-gray-800 rounded-xl shadow-lg border border-gray-700 hover:shadow-2xl transition duration-300 ease-in-out hover:border-accent/50">
+                        <div class="flex flex-col items-center">
+                            <!-- Imagen del Libro -->
+                            <!-- El placeholder se actualiza para usar el nuevo Primary color como fondo -->
+                            <img src="img1.png"
+                                 alt="Título del Libro"
+                                 class="w-40 h-60 object-cover rounded-lg mb-4 shadow-md"
+                                 onerror="this.onerror=null;this.src='https://placehold.co/200x300/1F2937/93C5FD?text=Libro';"
+                                 data-image-path="">
+
+                            <!-- Nombre del Libro (color Primary) -->
+                            <h3 class="text-xl font-semibold text-primary mb-2 text-center" data-title></h3>
+
+                            <!-- Descripción Corta (color gris 400) -->
+                            <p class="text-sm text-gray-400 text-center mb-4 flex-grow" data-description></p>
+
+                            <!-- Precio (color Accent) -->
+                            <p class="text-3xl font-extrabold text-accent mb-4" data-price></p>
+
+                            <!-- Botón de Compra con efecto (se mantiene primary para no competir con el CTA principal) -->
+                            <button
+                                class="w-full py-3 bg-primary text-gray-900 font-bold rounded-lg hover:bg-blue-300 transition duration-200 ease-in-out transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-gray-800">
+                                Comprar Ahora
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 4. SECCIÓN DE TESTIMONIOS/RESEÑAS DE USUARIOS -->
+    <section id="testimonios" class="py-16 md:py-24 bg-bg-dark">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Título de la sección en color Primary para destacar -->
+            <h2 class="text-4xl md:text-5xl font-bold text-center text-primary mb-16">
+                Historias de Éxito de Nuestros Lectores
+            </h2>
+
+            <!-- Grid de Reseñas (Testimonios) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Testimonio 1 -->
+                <div class="p-8 bg-bg-light rounded-xl shadow-2xl border-t-4 border-accent transition duration-300 hover:scale-[1.02]">
+                    <!-- Ícono de Comillas (SVG genérico) -->
+                    <svg class="w-8 h-8 text-accent mb-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 10H7V6h7v4zm-7 6h7v-4H7v4zm10-14H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H5V4h14v16z"/></svg>
+
+                    <!-- Texto de la Reseña -->
+                    <p class="text-xl italic text-gray-300 mb-6">
+                        "El libro 'Finanzas Simplificadas' fue un cambio de juego. En solo un mes, organicé mis deudas y ahora tengo un plan de ahorro real. ¡Lecturas que valen cada centavo!"
+                    </p>
+                    
+                    <!-- Calificación con Estrellas -->
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl text-accent">★★★★★</span>
+                    </div>
+
+                    <!-- Datos del Usuario -->
+                    <div class="flex items-center space-x-4">
+                        <img src="img2.png" alt="Foto de Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+                        <div>
+                            <p class="font-bold text-white">Javier M.</p>
+                            <p class="text-sm text-gray-400">Emprendedor Digital</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonio 2 -->
+                <div class="p-8 bg-bg-light rounded-xl shadow-2xl border-t-4 border-primary transition duration-300 hover:scale-[1.02]">
+                     <!-- Ícono de Comillas -->
+                    <svg class="w-8 h-8 text-primary mb-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 10H7V6h7v4zm-7 6h7v-4H7v4zm10-14H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H5V4h14v16z"/></svg>
+
+                    <!-- Texto de la Reseña -->
+                    <p class="text-xl italic text-gray-300 mb-6">
+                        "Compré 'La Mente Tranquila' y mis niveles de estrés bajaron notablemente. La calidad del contenido es superior a la de cualquier otro recurso de meditación que he usado."
+                    </p>
+                    
+                    <!-- Calificación con Estrellas -->
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl text-accent">★★★★★</span>
+                    </div>
+
+                    <!-- Datos del Usuario -->
+                    <div class="flex items-center space-x-4">
+                        <img src="img3.png" alt="Foto de Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+                        <div>
+                            <p class="font-bold text-white">Ana S.</p>
+                            <p class="text-sm text-gray-400">Diseñadora Gráfica</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonio 3 (Oculto en móvil, visible en tablet/desktop) -->
+                <div class="p-8 bg-bg-light rounded-xl shadow-2xl border-t-4 border-accent transition duration-300 hidden lg:block hover:scale-[1.02]">
+                     <!-- Ícono de Comillas -->
+                    <svg class="w-8 h-8 text-accent mb-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 10H7V6h7v4zm-7 6h7v-4H7v4zm10-14H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H5V4h14v16z"/></svg>
+
+                    <!-- Texto de la Reseña -->
+                    <p class="text-xl italic text-gray-300 mb-6">
+                        "'El Arte de Innovar' me dio las herramientas que necesitaba para relanzar mi startup. El enfoque práctico y los ejemplos me inspiraron muchísimo. ¡Recomendado 100%!"
+                    </p>
+                    
+                    <!-- Calificación con Estrellas -->
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl text-accent">★★★★★</span>
+                    </div>
+
+                    <!-- Datos del Usuario -->
+                    <div class="flex items-center space-x-4">
+                        <img src="https://placehold.co/50x50/374151/FFFFFF?text=L" alt="Foto de Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+                        <div>
+                            <p class="font-bold text-white">Luis P.</p>
+                            <p class="text-sm text-gray-400">Consultor de Estrategia</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- CTA SECUNDARIO para Testimonios -->
+            <div class="text-center mt-16">
+                <a href="#inicio"
+                    class="inline-block px-8 py-3 text-lg font-bold text-white bg-primary rounded-full shadow-lg hover:bg-blue-400 transition duration-300 focus:outline-none focus:ring-4 focus:ring-primary/50">
+                    Únete a miles de lectores satisfechos
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 5. Footer -->
+    <!-- El footer mantiene el color bg-dark, que ahora es el color principal del body -->
+    <footer class="bg-bg-dark text-white py-10 md:py-12 mt-16 border-t border-gray-800">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-2xl font-bold mb-4 text-primary">BookFlow.</h3>
+            <p class="mb-6 text-gray-500 max-w-xl mx-auto">
+                Tu fuente de inspiración y conocimiento. Lee más, vive mejor.
+            </p>
+
+            <!-- Enlaces a redes sociales (SVG Icons) -->
+            <div class="flex justify-center space-x-6 mb-8">
+                <!-- Los iconos de redes sociales ahora brillan en Accent al pasar el mouse -->
+                <!-- Facebook -->
+                <a href="#" target="_blank" aria-label="Facebook" class="text-gray-500 hover:text-accent transition duration-150">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.32-.05-1.58-.14-3-.14-3.01 0-4 1.74-4 4v2.5H7.5v4H10V22h4v-8.5z" /></svg>
+                </a>
+                <!-- Instagram -->
+                <a href="#" target="_blank" aria-label="Instagram" class="text-gray-500 hover:text-accent transition duration-150">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c2.75 0 3.12.01 4.22.06 1.08.05 1.76.22 2.37.45.65.25 1.19.64 1.7.92.48.27.91.68 1.33 1.11.43.43.84.85 1.1 1.33.23.61.4 1.29.45 2.37.05 1.1.06 1.47.06 4.22s-.01 3.12-.06 4.22c-.05 1.08-.22 1.76-.45 2.37-.25.65-.64 1.19-.92 1.7-.27.48-.68.91-1.11 1.33-.43.42-.85.84-1.33 1.1-.61.23-1.29.4-2.37.45-1.1.05-1.47.06-4.22.06s-3.12-.01-4.22-.06c-1.08-.05-1.76-.22-2.37-.45-.65-.25-1.19-.64-1.7-.92-.48-.27-.91-.68-1.33-1.11-.42-.43-.84-.85-1.1-1.33-.23-.61-.4-1.29-.45-2.37-.05-1.1-.06-1.47-.06-4.22s.01-3.12.06-4.22c.05-1.08.22-1.76.45-2.37.25-.65.64-1.19.92-1.7.27-.48.68-.91 1.11-1.33.43-.42.85-.84 1.33-1.1.61-.23 1.29-.4 2.37-.45C8.88 2.01 9.25 2 12 2zm0 2c-2.71 0-3.05.01-4.12.06-1.01.05-1.47.22-1.88.38-.4.15-.75.36-1.03.65-.29.28-.5.63-.65 1.03-.16.4-.33.87-.38 1.88C4.01 8.95 4 9.29 4 12s.01 3.05.06 4.12c.05 1.01.22 1.47.38 1.88.15.4.36.75.65 1.03.28.29.63.5 1.03.65.4.16.87.33 1.88.38 1.07.05 1.4.06 4.12.06s3.05-.01 4.12-.06c1.01-.05 1.47-.22 1.88-.38.4-.15.75-.36 1.03-.65.29-.28.5-.63.65-1.03.16-.4.33-.87.38-1.88.05-1.07.06-1.4.06-4.12s-.01-3.05-.06-4.12c-.05-1.01-.22-1.47-.38-1.88-.15-.4-.36-.75-.65-1.03-.28-.29-.63-.5-1.03-.65-.4-.16-.87-.33-1.88-.38C15.05 4.01 14.71 4 12 4zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm6.5-7A1.5 1.5 0 1 0 18.5 7a1.5 1.5 0 0 0 0 3z" /></svg>
+                </a>
+                <!-- X (Twitter) -->
+                <a href="#" target="_blank" aria-label="X" class="text-gray-500 hover:text-accent transition duration-150">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.46 5.86c-.77.34-1.6.57-2.47.67.9-.53 1.58-1.37 1.9-2.37-.85.5-1.79.87-2.79 1.07-.8-.85-1.95-1.38-3.21-1.38-2.43 0-4.4 1.97-4.4 4.4 0 .34.04.67.11.99-3.66-.18-6.9-1.94-9.07-4.63-.38.66-.58 1.42-.58 2.25 0 1.52.77 2.87 1.94 3.66-.7-.02-1.35-.22-1.93-.53v.05c0 2.13 1.52 3.91 3.54 4.31-.37.1-.75.15-1.15.15-.28 0-.55-.03-.81-.08 1.01 3.2 3.94 5.54 7.42 5.6-1.5 1.18-3.4 1.9-5.48 1.9-.36 0-.71-.02-1.05-.06 2.01 1.28 4.4 2.03 7 2.03 8.4 0 13.01-6.93 13.01-13.02 0-.2.0-.39-.01-.59.9-.65 1.68-1.46 2.3-2.39z" /></svg>
+                </a>
+            </div>
+
+            <!-- Derechos de autor y contacto -->
+            <p class="text-sm text-gray-600 pt-4 border-t border-gray-700">
+                &copy; 2024 BookFlow. Todos los derechos reservados. | Contacto: info@bookflow.com
+            </p>
+        </div>
+    </footer>
+
+    <!-- 5. JavaScript para Interactividad y Lógica -->
+    <script>
+        // Array de datos de los libros para inyección dinámica
+        const booksData = [
+            {
+                title: "El Legado Digital",
+                description: "Guía esencial para navegar la era de la información y la IA.",
+                price: "$25.99",
+                image: "imagenes/img1.png"
+            },
+            {
+                title: "La Mente Tranquila",
+                description: "Técnicas de mindfulness para reducir el estrés y aumentar el enfoque.",
+                price: "$19.50",
+                image: "imagenes/img2.png"
+            },
+            {
+                title: "El Arte de Innovar",
+                description: "Estrategias probadas para desatar la creatividad en cualquier campo.",
+                price: "$34.99",
+                image: "imagenes/img3.png"
+            },
+            {
+                title: "Crónicas Estelares",
+                description: "Un viaje épico de ciencia ficción a través de galaxias distantes.",
+                price: "$22.00",
+                image: "imagenes/img4.png"
+            },
+            {
+                title: "Finanzas Simplificadas",
+                description: "Domina tus ingresos y construye riqueza con pasos sencillos.",
+                price: "$28.75",
+                image: "imagenes/img5.png"
+            },
+            {
+                title: "Cocina Global Rápida",
+                description: "Recetas sabrosas y saludables de todo el mundo, listas en 30 minutos.",
+                price: "$15.99",
+                image: "imagenes/img6.png"
+            }
+        ];
+
+        /**
+         * Función principal para inicializar la página al cargar el DOM.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBookCards();
+            setupIntersectionObserver();
+        });
+
+        /**
+         * Rellena la cuadrícula de la galería con las tarjetas de libros.
+         */
+        function renderBookCards() {
+            const grid = document.getElementById('books-grid');
+            const template = document.getElementById('book-template');
+            
+            if (!grid || !template) return console.error('Error: grid or template not found.');
+
+            booksData.forEach(book => {
+                // Clona el contenido del template
+                const card = template.content.cloneNode(true).querySelector('.book-card');
+
+                // Busca y actualiza los elementos de datos
+                const img = card.querySelector('img');
+                const title = card.querySelector('[data-title]');
+                const description = card.querySelector('[data-description]');
+                const price = card.querySelector('[data-price]');
+
+                // Inserta los datos
+                img.setAttribute('src', book.image); // Usar las imágenes l1.png a l6.png
+                img.setAttribute('alt', book.title);
+                title.textContent = book.title;
+                description.textContent = book.description;
+                price.textContent = book.price;
+
+                // Agrega la tarjeta al contenedor principal
+                grid.appendChild(card);
+            });
+        }
+
+        /**
+         * Configura el Intersection Observer para animar los libros al aparecer.
+         */
+        function setupIntersectionObserver() {
+            const cards = document.querySelectorAll('.book-card');
+
+            // Opciones del observer: disparar cuando el 10% de la tarjeta esté visible
+            const options = {
+                root: null, // Viewport como root
+                rootMargin: '0px',
+                threshold: 0.1 // 10% visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Si la tarjeta está visible, añade la clase 'visible' para la animación
+                        entry.target.classList.add('visible');
+                        // Deja de observar el elemento una vez animado
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, options);
+
+            // Observa cada tarjeta
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        /**
+         * Maneja el scroll suave para los enlaces del menú.
+         */
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if (this.getAttribute('href') !== '#') {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+    </script>
+
+</body>
+</html>
